@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -25,6 +26,15 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (UnauthorizedHttpException $e, $request) {
+            return response()->json([
+                'success' => false,
+                'errorCode' => 403,
+                'errorMessage' => 'Unauthorized. Please log in to perform this action.',
+                'showType' => config('constants.error_show_types.error')
+            ], 403);
         });
     }
 }
